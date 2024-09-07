@@ -34,7 +34,7 @@ def serialize_post_optimized(post):
 def serialize_tag(tag):
     return {
         'title': tag.title,
-        'posts_with_tag': len(Post.objects.filter(tags=tag)),
+        'posts_with_tag': getattr(tag, 'posts_count', 0),
     }
 
 
@@ -58,7 +58,7 @@ def index(request):
     most_fresh_posts = Post.objects.order_by(
         '-published_at'
     )[:5].prefetch_related('author', 'tags')
-    most_popular_tags = Tag.objects.popular()[:5]
+    most_popular_tags = Tag.objects.popular()[:5].annotate(posts_count=Count('posts'))
     context = {
         'most_popular_posts': [
             serialize_post_optimized(post) for post in most_popular_posts

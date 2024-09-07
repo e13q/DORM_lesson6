@@ -26,22 +26,7 @@ def serialize_post_optimized(post):
         'title': post.title,
         'teaser_text': post.text[:200],
         'author': post.author.username,
-        'comments_amount': post.comments_count,
-        # len(Comment.objects.filter(post=post)),
-        'image_url': post.image.url if post.image else None,
-        'published_at': post.published_at,
-        'slug': post.slug,
-        'tags': [serialize_tag(tag) for tag in post.tags.all()],
-        'first_tag_title': post.tags.all()[0].title,
-    }
-
-
-def serialize_post_without_comments(post):
-    return {
-        'title': post.title,
-        'teaser_text': post.text[:200],
-        'author': post.author.username,
-        # len(Comment.objects.filter(post=post)),
+        'comments_amount': getattr(post, 'comments_count', 0),
         'image_url': post.image.url if post.image else None,
         'published_at': post.published_at,
         'slug': post.slug,
@@ -85,7 +70,7 @@ def index(request):
         'most_popular_posts': [
             serialize_post_optimized(post) for post in most_popular_posts
         ],
-        'page_posts': [serialize_post_without_comments(post) for post in most_fresh_posts],
+        'page_posts': [serialize_post_optimized(post) for post in most_fresh_posts],
         'popular_tags': [serialize_tag(tag) for tag in most_popular_tags],
     }
     return render(request, 'index.html', context)

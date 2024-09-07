@@ -34,7 +34,7 @@ def serialize_post_optimized(post):
 def serialize_tag(tag):
     return {
         'title': tag.title,
-        'posts_with_tag': getattr(tag, 'posts_count', 0),
+        'posts_with_tag': getattr(tag, 'posts_count', len(Post.objects.filter(tags=tag))),
     }
 
 

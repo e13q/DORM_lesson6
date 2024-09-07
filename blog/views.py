@@ -52,12 +52,12 @@ def annotate_comments_count(posts):
 
 def index(request):
     most_popular_posts = Post.objects.popular() \
-            .prefetch_related('author')[:5] \
+            .prefetch_related('author', 'tags')[:5] \
             .fetch_with_comments_count()
 
     most_fresh_posts = Post.objects.order_by(
         '-published_at'
-    )[:5].prefetch_related('author')
+    )[:5].prefetch_related('author', 'tags')
     most_popular_tags = Tag.objects.popular()[:5]
     context = {
         'most_popular_posts': [
@@ -111,14 +111,18 @@ def post_detail(request, slug):
     }
     return render(request, 'post-details.html', context)
 
+
 def get_related_posts_count(tag):
     return tag.posts.count()
+
 
 def tag_filter(request, tag_title):
     tag = Tag.objects.get(title=tag_title)
     most_popular_tags = Tag.objects.popular()[:5]
 
-    most_popular_posts = []  # TODO. Как это посчитать?
+    most_popular_posts = Post.objects.popular() \
+                                     .prefetch_related('author')[:5] \
+                                     .fetch_with_comments_count()
 
     related_posts = tag.posts.all()[:20]
 

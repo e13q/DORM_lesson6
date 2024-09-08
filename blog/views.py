@@ -84,10 +84,6 @@ def post_detail(request, slug):
     return render(request, 'post-details.html', context)
 
 
-def get_related_posts_count(tag):
-    return tag.posts.count()
-
-
 def tag_filter(request, tag_title):
     tag = Tag.objects.get(title=tag_title)
     most_popular_tags = Tag.objects.popular()[:5]

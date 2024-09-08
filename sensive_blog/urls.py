@@ -1,10 +1,10 @@
 from django.contrib import admin
 from blog import views
-from django.urls import path
-from debug_toolbar.toolbar import debug_toolbar_urls
+from django.urls import path, include
 
 from django.conf.urls.static import static
 from django.conf import settings
+from debug_toolbar import urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -13,6 +13,6 @@ urlpatterns = [
     path('tag/<slug:tag_title>', views.tag_filter, name='tag_filter'),
     path('contacts/', views.contacts, name='contacts'),
     path('', views.index, name='index'),
+    path('__debug__/', include(urls))
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += debug_toolbar_urls()
